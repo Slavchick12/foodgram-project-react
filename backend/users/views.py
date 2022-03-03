@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import mixins, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from recipes.pagination import PageNumberPaginator
@@ -18,6 +18,7 @@ class CustomUserViewSet(
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = PageNumberPaginator
+    permission_classes = [AllowAny]
 
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):

@@ -6,6 +6,8 @@ from .models import Follow, User
 
 
 class UserSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = (
@@ -14,7 +16,15 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'first_name',
             'last_name',
+            'is_subscribed'
         )
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        return Follow.objects.filter(
+            user=request.user,
+            following=obj.id
+        ).exists()
 
     def create(self, validated_data):
         user = User.objects.create(**validated_data)

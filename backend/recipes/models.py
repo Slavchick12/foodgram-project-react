@@ -3,10 +3,13 @@ from django.db import models
 
 from users.models import User
 
+MG = 'milligrams'
+G = 'grams'
+KG = 'kilograms'
 UNITS = [
-    ('мг', 'мг'),
-    ('г', 'г'),
-    ('кг', 'кг')
+    (MG, 'мг'),
+    (G, 'г'),
+    (KG, 'кг')
 ]
 
 
@@ -33,23 +36,18 @@ class Ingredient(models.Model):
     name = models.CharField(
         'название',
         max_length=50,
-        help_text='Название ингридиента'
+        help_text='Название ингредиента'
     )
     measurement_unit = models.CharField(
         'единица измерения',
         max_length=50,
         choices=UNITS,
     )
-    amount = models.PositiveSmallIntegerField(
-        default=1,
-        verbose_name='Количество',
-        help_text='Количество ингредиента',
-    )
 
     class Meta:
         ordering = ('name',)
-        verbose_name = 'Ингридиент'
-        verbose_name_plural = 'Ингридиенты'
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
         return self.name
@@ -72,15 +70,15 @@ class Recipe(models.Model):
         verbose_name='автор',
     )
     image = models.ImageField(
-        upload_to='posts/',
+        upload_to='images',
         blank=True, null=True,
         help_text='Можете загрузить картинку',
         verbose_name='картинка',
     )
     tags = models.ManyToManyField(
         Tag,
-        related_name='tag',
-        verbose_name='тег',
+        related_name='recipes',
+        verbose_name='теги',
     )
     cooking_time = models.PositiveIntegerField(
         'Время приготовления',
@@ -88,8 +86,9 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        related_name='ingredient',
-        verbose_name='ингридиент',
+        through='IngredientInRecipe',
+        related_name='recipes',
+        verbose_name='ингредиент',
     )
     description = models.TextField('описание', help_text='Описание')
 
@@ -100,6 +99,33 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class IngredientInRecipe(models.Model):
+    ingredient = models.ForeignKey(
+        Ingredient,
+        on_delete=models.CASCADE,
+        related_name='ingredient_recipe',
+        verbose_name='Ингредиенты'
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='recipe_ingredient',
+        verbose_name='Рецепт'
+    )
+    amount = models.PositiveSmallIntegerField(
+        default=1,
+        verbose_name='Количество',
+        help_text='Количество ингредиента',
+    )
+
+    class Meta:
+        verbose_name = 'Ингредиент в рецепте'
+        verbose_name_plural = 'Ингредиенты в рецепте'
+
+    def __str__(self):
+        return f'{self.ingredient}'
 
 
 class Favorite(models.Model):
@@ -120,6 +146,11 @@ class Favorite(models.Model):
         ordering = ('recipe', 'user')
         verbose_name = 'Избранное'
         verbose_name_plural = 'Избранное'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'user'],
+                name='unique_favorite')
+        ]
 
 
 class ShoppingCart(models.Model):
@@ -139,6 +170,11 @@ class ShoppingCart(models.Model):
     class Meta:
         verbose_name = 'Список покупок'
         verbose_name_plural = 'Списки покупок'
+        constraints = [
+            models.UniqueConstraint(
+                fields=['recipe', 'user'],
+                name='unique_recipe')
+        ]
 
     def __str__(self):
         return f'{self.user}, {self.recipe}'

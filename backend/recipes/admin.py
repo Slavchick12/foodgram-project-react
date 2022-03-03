@@ -1,6 +1,11 @@
 from django.contrib import admin
 
-from .models import Ingredient, Recipe, ShoppingCart, Tag
+from .models import Ingredient, IngredientInRecipe, Recipe, ShoppingCart, Tag
+
+
+class IngredientInRecipetInLine(admin.TabularInline):
+    model = IngredientInRecipe
+    fk_name = 'recipe'
 
 
 @admin.register(ShoppingCart)
@@ -25,6 +30,7 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'author', 'tags')
     list_filter = ('pub_date',)
     empty_value_display = '-пусто-'
+    inlines = [IngredientInRecipetInLine]
 
 
 @admin.register(Ingredient)
