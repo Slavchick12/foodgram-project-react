@@ -6,8 +6,7 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
 from .mixins import GETRequestsMixins
-from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                     ShoppingCart, Tag)
+from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import PageNumberPaginator
 from .permissions import AdminUserOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,

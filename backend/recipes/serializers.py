@@ -7,7 +7,6 @@ from users.serializers import UserSerializer
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
 
-
 COOKING_TIME_MORE_ZERO = 'Время готовки должно быть больше нуля!'
 FAVORITE_ADDED = 'Рецепт уже добавлен в избранное!'
 INGREDIENT_ADDED = 'Ингредиент не должен повторяться!'
