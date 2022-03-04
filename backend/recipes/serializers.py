@@ -8,6 +8,14 @@ from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
 
 
+COOKING_TIME_MORE_ZERO = 'Время готовки должно быть больше нуля!'
+FAVORITE_ADDED = 'Рецепт уже добавлен в избранное!'
+INGREDIENT_ADDED = 'Ингредиент не должен повторяться!'
+TAG_ADDED = 'Тег не должен повторяться!'
+SHOPLIST_ADDED = 'Рецепт уже добавлен в список покупок!'
+INGREDIENT_MORE_ZERO = 'Количество ингредиента должно быть больше 0!'
+
+
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -84,53 +92,58 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         ingredients = self.initial_data.get('ingredients')
+        tags = self.initial_data.get('tags')
+        list = []
         for ingredient in ingredients:
             if ingredient['amount'] <= 0:
-                raise serializers.ValidationError(
-                    'Количество ингредиента должно быть больше 0!'
-                )
+                raise serializers.ValidationError(INGREDIENT_MORE_ZERO)
+            if ingredient in list:
+                raise serializers.ValidationError(INGREDIENT_ADDED)
+            else:
+                list.append(ingredient)
+        for tag in tags:
+            if tag in list:
+                raise serializers.ValidationError(TAG_ADDED)
+            else:
+                list.append(tag)
+        if data['cooking_time'] <= 0:
+            raise serializers.ValidationError(COOKING_TIME_MORE_ZERO)
+        del list
         data['ingredients'] = ingredients
+        data['tags'] = tags
         return data
 
-    def create(self, validated_data):
-        ingredients = validated_data.pop('ingredients')
-        recipe = Recipe.objects.create(**validated_data)
-        tags = self.initial_data.get('tags')
-        recipe.tags.set(tags)
+    def add_ingredients(self, instance, **validated_data):
+        ingredients = validated_data['ingredients']
         for ingredient in ingredients:
-            IngredientInRecipe.objects.get_or_create(
-                recipe=recipe,
-                ingredient_id=ingredient.get('id'),
-                amount=ingredient.get('amount'),
-            )
-        recipe.is_favorited = False
-        recipe.is_in_shopping_cart = False
-        recipe.save()
-        return recipe
-
-    def update(self, instance, validated_data):
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.description = validated_data.get(
-            'description',
-            instance.description
-        )
-        instance.cooking_time = validated_data.get(
-            'cooking_time', instance.cooking_time
-        )
-        instance.tags.clear()
-        tags = self.initial_data.get('tags')
-        instance.tags.set(tags)
-        IngredientInRecipe.objects.filter(recipe=instance).all().delete()
-        for ingredient in validated_data.get('ingredients'):
-            ingredient_amount = IngredientInRecipe.objects.create(
+            IngredientInRecipe.objects.create(
                 recipe=instance,
                 ingredient_id=ingredient.get('id'),
                 amount=ingredient.get('amount')
             )
-            ingredient_amount.save()
-        instance.save()
         return instance
+
+    def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        recipe.tags.set(tags)
+        return self.add_ingredients(
+            recipe,
+            ingredients=ingredients,
+        )
+
+    def update(self, instance, validated_data):
+        instance.ingredients.clear()
+        instance.tags.clear()
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        instance.tags.set(tags)
+        instance = self.add_ingredients(
+            instance,
+            ingredients=ingredients,
+        )
+        return super().update(instance, validated_data)
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
@@ -146,7 +159,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         user = data['user']
         recipe_id = data['recipe'].id
         if Favorite.objects.filter(user=user, recipe__id=recipe_id).exists():
-            raise ValidationError('Рецепт уже добавлен в избранное!')
+            raise ValidationError(FAVORITE_ADDED)
         return data
 
 
@@ -169,5 +182,5 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
             user=user,
             recipe__id=recipe_id
         ).exists():
-            raise ValidationError('Рецепт уже добавлен в список покупок!')
+            raise ValidationError(SHOPLIST_ADDED)
         return data
