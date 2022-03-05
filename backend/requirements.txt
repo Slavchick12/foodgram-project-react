@@ -13,6 +13,7 @@ django-templated-mail==1.1.1
 djangorestframework==3.13.1
 djangorestframework-simplejwt==4.8.0
 djoser==2.1.0
+drf-extra-fields==3.2.1
 flake8==4.0.1
 gunicorn==20.1.0
 idna==3.3
@@ -23,7 +24,8 @@ MarkupSafe==2.0.1
 mccabe==0.6.1
 oauthlib==3.2.0
 Pillow==9.0.1
-psycopg2-binary==2.8.6
+psycopg2==2.9.3
+psycopg2-binary==2.9.3
 pycodestyle==2.8.0
 pycparser==2.21
 pyflakes==2.4.0

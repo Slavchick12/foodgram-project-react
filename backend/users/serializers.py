@@ -5,6 +5,10 @@ from rest_framework.validators import UniqueTogetherValidator
 from .models import Follow, User
 
 
+FOLLOW_YOURSELF_ERROR = 'Невозможно подписаться на себя!'
+REPEATED_FOLLOW_ERROR = 'Вы уже подписаны на данного автора!'
+
+
 class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
@@ -45,12 +49,12 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def validate(self, data):
         if data['user'] == data['following']:
-            raise ValidationError('Невозможно подписаться на себя!')
+            raise ValidationError(FOLLOW_YOURSELF_ERROR)
         if Follow.objects.filter(
             user=data['user'],
             following=data['following']
         ).exists():
-            raise ValidationError('Вы уже подписаны на данного автора!')
+            raise ValidationError(REPEATED_FOLLOW_ERROR)
         return data
 
     class Meta:

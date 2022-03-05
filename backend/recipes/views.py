@@ -64,10 +64,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'recipe__ingredients__measurement_unit',
         )
         ingredients_annotated = ingredients.annotate(
-                        amount_sum=Sum(
-                            'recipe__recipe_ingredient__amount'
-                        )
-                    )
+            amount_sum=Sum(
+                'recipe__recipe_ingredient__amount'
+            )
+        )
         for ingredient in ingredients_annotated:
             name = ingredient[0]
             measurement_unit = ingredient[1]

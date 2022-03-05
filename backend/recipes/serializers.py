@@ -37,7 +37,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
-    id = serializers.ReadOnlyField(source='ingredient.id')
+    id = serializers.IntegerField()
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
@@ -52,12 +52,11 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    tags = TagSerializer(read_only=True, many=True)
-    ingredients = IngredientInRecipeSerializer(
-        source='recipe_ingredient',
-        many=True,
-        read_only=True,
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(),
+        many=True
     )
+    ingredients = IngredientInRecipeSerializer(many=True,)
     image = Base64ImageField(max_length=None, use_url=True)
 
     class Meta:
@@ -90,24 +89,24 @@ class RecipeSerializer(serializers.ModelSerializer):
         ).exists()
 
     def validate(self, data):
-        ingredients = self.initial_data.get('ingredients')
-        tags = self.initial_data.get('tags')
-        list = []
+        ingredients = data['ingredients']
+        tags = data['tags']
+        data_list = []
         for ingredient in ingredients:
             if ingredient['amount'] <= 0:
                 raise serializers.ValidationError(INGREDIENT_MORE_ZERO)
-            if ingredient in list:
+            if ingredient in data_list:
                 raise serializers.ValidationError(INGREDIENT_ADDED)
             else:
-                list.append(ingredient)
+                data_list.append(ingredient)
         for tag in tags:
-            if tag in list:
+            if tag in data_list:
                 raise serializers.ValidationError(TAG_ADDED)
             else:
-                list.append(tag)
+                data_list.append(tag)
         if data['cooking_time'] <= 0:
             raise serializers.ValidationError(COOKING_TIME_MORE_ZERO)
-        del list
+        del data_list
         data['ingredients'] = ingredients
         data['tags'] = tags
         return data
@@ -117,8 +116,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         for ingredient in ingredients:
             IngredientInRecipe.objects.create(
                 recipe=instance,
-                ingredient_id=ingredient.get('id'),
-                amount=ingredient.get('amount')
+                ingredient_id=ingredient['id'],
+                amount=ingredient['amount']
             )
         return instance
 
