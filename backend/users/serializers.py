@@ -4,7 +4,6 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from .models import Follow, User
 
-
 FOLLOW_YOURSELF_ERROR = 'Невозможно подписаться на себя!'
 REPEATED_FOLLOW_ERROR = 'Вы уже подписаны на данного автора!'
 
