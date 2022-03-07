@@ -8,7 +8,8 @@ services:
   db:
     image: postgres:13.0-alpine
     environment: 
-      - POSTGRES_DB=postgres
+      - DB_NAME=postgres
+      - DB_PORT=5432
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     restart: always
@@ -19,20 +20,23 @@ services:
     ports:
       - '5432:5432'
   frontend:
+    image: slavc/foodgram_frontend:latest
     build:
       context: ../frontend
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
   backend:
-    image: slavc/foodgram:latest
+#    image: slavc/foodgram_backend:latest
     build:
-      context: ../backend
+      context: ../backend/
       dockerfile: Dockerfile
     restart: always
     volumes:
       - static_value:/app/static/
       - media_value:/app/media/
+    ports:
+      - '8000:8000'
     depends_on:
       - db
     env_file:
