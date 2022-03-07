@@ -25,7 +25,7 @@ services:
     volumes:
       - ../frontend/:/app/result_build/
   backend:
-#    image: slavc/foodgram_backend:latest
+    image: slavc/foodgram:latest
     build:
       context: ../backend
       dockerfile: Dockerfile
