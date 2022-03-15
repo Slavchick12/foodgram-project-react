@@ -1,19 +1,18 @@
 from django.shortcuts import get_object_or_404
 from recipes.pagination import PageNumberPaginator
-from rest_framework import mixins, status, viewsets
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
-
+from djoser.views import UserViewSet
 from .models import Follow, User
 from .serializers import FollowSerializer, UserSerializer
 
+FOLLOW_YOURSELF_ERROR = 'Нельзя подписываться на себя!'
+FOLLOW_USER_ERROR = 'Вы уже подписаны на пользователя!'
 
-class CustomUserViewSet(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    viewsets.GenericViewSet
-):
+
+class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = PageNumberPaginator
@@ -22,34 +21,42 @@ class CustomUserViewSet(
     @action(detail=False, permission_classes=[IsAuthenticated])
     def subscriptions(self, request):
         user = request.user
-        subscriptions = Follow.objects.filter(user=user)
+        queryset = Follow.objects.filter(user=user)
+        pages = self.paginate_queryset(queryset)
         serializer = FollowSerializer(
-            subscriptions,
-            many=True,
-            context={'request': request}
+            pages,
+            context={'request': request},
+            many=True
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.get_paginated_response(serializer.data)
 
-    @action(detail=True, permission_classes=[IsAuthenticated])
-    def subscribe(self, request, pk=None):
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsAuthenticated]
+    )
+    def subscribe(self, request, id=None):
         user = request.user
-        following = get_object_or_404(User, pk=pk)
-        data = {
-            'user': user.id,
-            'following': following.id,
-        }
+        following = get_object_or_404(User, id=id)
+        if user == following:
+            return Response({
+                'errors': FOLLOW_YOURSELF_ERROR
+            }, status=status.HTTP_400_BAD_REQUEST)
+        if Follow.objects.filter(user=user, following=following).exists():
+            return Response({
+                'errors': FOLLOW_USER_ERROR
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        follow = Follow.objects.create(user=user, following=following)
         serializer = FollowSerializer(
-            data=data,
-            context={'request': request}
+            follow, context={'request': request}
         )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     @subscribe.mapping.delete
-    def delete_subscribe(self, request, pk=None):
+    def delete_subscribe(self, request, id=None):
         user = request.user
-        following = get_object_or_404(User, pk=pk)
+        following = get_object_or_404(User, pk=id)
         subscribe = get_object_or_404(
             Follow,
             user=user,

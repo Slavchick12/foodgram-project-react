@@ -89,7 +89,7 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='ингредиент',
     )
-    description = models.TextField('описание', help_text='Описание')
+    text = models.TextField('описание', help_text='Описание')
 
     class Meta:
         ordering = ('-pub_date',)

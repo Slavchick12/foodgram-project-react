@@ -52,10 +52,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
-    tags = serializers.PrimaryKeyRelatedField(
-        queryset=Tag.objects.all(),
-        many=True
-    )
+    tags = TagSerializer(many=True)
     ingredients = IngredientInRecipeSerializer(many=True,)
     image = Base64ImageField(max_length=None, use_url=True)
 
@@ -68,7 +65,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'name',
             'image',
             'ingredients',
-            'description',
+            'text',
             'cooking_time',
             'is_favorited',
             'is_in_shopping_cart',

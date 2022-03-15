@@ -17,15 +17,6 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ../backend/.env
-    ports:
-      - '5432:5432'
-  frontend:
-    image: slavc/foodgram_frontend:latest
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
-    volumes:
-      - ../frontend/:/app/result_build/
   backend:
 #    image: slavc/foodgram_backend:latest
     build:
@@ -41,6 +32,15 @@ services:
       - db
     env_file:
       - ../backend/.env
+  frontend:
+#    image: slavc/foodgram_frontend:latest
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ../frontend/:/app/result_build/
+    depends_on:
+      - backend
   nginx:
     image: nginx:1.19.3
     restart: always
@@ -48,9 +48,9 @@ services:
       - '80:80'
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - static_value:/static/
-      - media_value:/media/
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
+      - static_value:/var/html/static/
+      - media_value:/var/html/media/
     depends_on:
     - backend

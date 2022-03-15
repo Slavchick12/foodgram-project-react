@@ -13,6 +13,7 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeSerializer, ShoppingCartSerializer,
                           TagSerializer)
 from .utils import add_obj, delete_obj
+from .filters import CustomFilterClass
 
 
 class TagViewSet(GETRequestsMixins):
@@ -31,15 +32,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = PageNumberPaginator
-    filter_backends = (DjangoFilterBackend, filters.OrderingFilter,)
-    filterset_fields = ('tags',)
+    filter_class = CustomFilterClass
     ordering_fields = ('-pub_date',)
     permission_classes = [AdminUserOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    @action(detail=True, permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def favorite(self, request, pk=None):
         return add_obj(request, pk, Recipe, FavoriteSerializer)
 
@@ -47,7 +47,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def delete_favorite(self, request, pk=None):
         return delete_obj(request, pk, Recipe, Favorite)
 
-    @action(detail=True, permission_classes=[IsAuthenticated])
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk=None):
         return add_obj(request, pk, Recipe, ShoppingCartSerializer)
 
@@ -55,8 +55,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def delete_shopping_cart(self, request, pk=None):
         return delete_obj(request, pk, Recipe, ShoppingCart)
 
-    @action(detail=True, methods=['GET'], permission_classes=[IsAuthenticated])
-    def download_shopping_cart(self, request, pk=None):
+    @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated])
+    def download_shopping_cart(self, request):
         queryset = ShoppingCart.objects.filter(user=request.user)
         shoplist = {}
         ingredients = queryset.values_list(
