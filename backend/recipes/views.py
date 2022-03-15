@@ -1,10 +1,10 @@
 from django.db.models import Sum
 from django.http import HttpResponse
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
+from .filters import CustomFilterClass
 from .mixins import GETRequestsMixins
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import PageNumberPaginator
@@ -13,7 +13,6 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeSerializer, ShoppingCartSerializer,
                           TagSerializer)
 from .utils import add_obj, delete_obj
-from .filters import CustomFilterClass
 
 
 class TagViewSet(GETRequestsMixins):
@@ -39,7 +38,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsAuthenticated]
+    )
     def favorite(self, request, pk=None):
         return add_obj(request, pk, Recipe, FavoriteSerializer)
 
@@ -47,7 +50,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def delete_favorite(self, request, pk=None):
         return delete_obj(request, pk, Recipe, Favorite)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
+    @action(
+        detail=True,
+        methods=['post'],
+        permission_classes=[IsAuthenticated]
+    )
     def shopping_cart(self, request, pk=None):
         return add_obj(request, pk, Recipe, ShoppingCartSerializer)
 
@@ -55,7 +62,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def delete_shopping_cart(self, request, pk=None):
         return delete_obj(request, pk, Recipe, ShoppingCart)
 
-    @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated])
+    @action(
+        detail=False,
+        methods=['GET'],
+        permission_classes=[IsAuthenticated]
+    )
     def download_shopping_cart(self, request):
         queryset = ShoppingCart.objects.filter(user=request.user)
         shoplist = {}

@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from rest_framework.exceptions import ValidationError
-from rest_framework.validators import UniqueTogetherValidator
+
+from recipes.models import Recipe
 
 from .models import Follow, User
-from recipes.models import Recipe
 
 FOLLOW_YOURSELF_ERROR = 'Невозможно подписаться на себя!'
 REPEATED_FOLLOW_ERROR = 'Вы уже подписаны на данного автора!'
