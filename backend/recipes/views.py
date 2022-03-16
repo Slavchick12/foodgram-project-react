@@ -45,6 +45,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 return queryset.filter(favorites__user=user)
             if self.request.query_params.get('is_in_shopping_cart'):
                 return queryset.filter(shopping_cart__user=user)
+        return
 
     @action(
         detail=True,
