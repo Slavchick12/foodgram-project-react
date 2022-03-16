@@ -1,9 +1,8 @@
 from django_filters import AllValuesMultipleFilter
 from django_filters import rest_framework as filters
 from django_filters.widgets import BooleanWidget
-from rest_framework.filters import SearchFilter
-
 from recipes.models import Recipe
+from rest_framework.filters import SearchFilter
 
 
 class CustomFilterClass(filters.FilterSet):
