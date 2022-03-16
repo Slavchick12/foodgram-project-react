@@ -37,16 +37,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def get_queryset(self):
-        queryset = Recipe.objects.all()
-        if self.request.user.is_authenticated:
-            user = self.request.user
-            if self.request.query_params.get('is_favorited'):
-                queryset = queryset.filter(favorites__user=user)
-            if self.request.query_params.get('is_in_shopping_cart'):
-                queryset = queryset.filter(shopping_cart__user=user)
-        return queryset
-
     @action(
         detail=True,
         methods=['post'],
