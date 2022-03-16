@@ -20,7 +20,6 @@ jobs:
         pip install -r requirements.txt 
     - name: Test with flake8
       run: |
-        isort .
         python -m flake8
   build_and_push_to_docker_hub:
       if: github.ref == 'refs/heads/master'
