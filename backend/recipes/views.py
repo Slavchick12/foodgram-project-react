@@ -42,10 +42,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         if self.request.user.is_authenticated:
             user = self.request.user
             if self.request.query_params.get('is_favorited'):
-                query_set = queryset.filter(favorites__user=user)
+                queryset = queryset.filter(favorites__user=user)
             if self.request.query_params.get('is_in_shopping_cart'):
-                query_set = queryset.filter(shopping_cart__user=user)
-        return query_set
+                queryset = queryset.filter(shopping_cart__user=user)
+        return queryset
 
     @action(
         detail=True,
