@@ -133,4 +133,6 @@ dmypy.json
 
 steps.txt
 
+.flake8
+
 static/
