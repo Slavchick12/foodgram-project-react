@@ -11,7 +11,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['51.250.26.100', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['130.193.52.17', '127.0.0.1', 'localhost']
 
 
 INSTALLED_APPS = [
