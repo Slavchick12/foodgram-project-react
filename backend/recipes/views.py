@@ -38,12 +38,13 @@ class RecipeViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user)
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_authenticated:
+        queryset = Recipe.objects.all()
+        if self.request.user.is_authenticated:
+            user = self.request.user
             if self.request.query_params.get('is_favorited'):
-                queryset = Recipe.objects.filter(favorites__user=user)
+                queryset = queryset.filter(favorites__user=user)
             if self.request.query_params.get('is_in_shopping_cart'):
-                queryset = Recipe.objects.filter(shopping_cart__user=user)
+                queryset = queryset.filter(shopping_cart__user=user)
         return queryset
 
     @action(
