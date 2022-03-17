@@ -125,7 +125,7 @@ class IngredientInRecipe(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
-                name='unique_favorite')
+                name='favorite_unique')
         ]
 
     def __str__(self):
