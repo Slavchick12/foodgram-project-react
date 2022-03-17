@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from rest_framework import filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.serializers import ValidationError
 
 from .filters import CustomFilterClass
 from .mixins import GETRequestsMixins
@@ -14,9 +13,6 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecipeSerializer, ShoppingCartSerializer,
                           TagSerializer)
 from .utils import add_obj, delete_obj
-
-
-AUTHENTICATED_ERROR = 'Нужно авторизоваться!'
 
 
 class TagViewSet(GETRequestsMixins):
@@ -45,11 +41,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = self.request.user
         if user.is_authenticated:
             if self.request.query_params.get('is_favorited'):
-                return Recipe.objects.filter(favorites__user=user)
+                queryset = Recipe.objects.filter(favorites__user=user)
             if self.request.query_params.get('is_in_shopping_cart'):
-                return Recipe.objects.filter(shopping_cart__user=user)
-        else:
-            raise ValidationError(AUTHENTICATED_ERROR)
+                queryset = Recipe.objects.filter(shopping_cart__user=user)
+        return queryset
 
     @action(
         detail=True,
