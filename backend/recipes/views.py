@@ -10,9 +10,8 @@ from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import PageNumberPaginator
 from .permissions import AdminUserOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
-                          RecipeSerializer, RecipeReadSerializer,
-                          ShoppingCartSerializer,
-                          TagSerializer)
+                          RecipeReadSerializer, RecipeSerializer,
+                          ShoppingCartSerializer, TagSerializer)
 from .utils import add_obj, delete_obj
 
 
