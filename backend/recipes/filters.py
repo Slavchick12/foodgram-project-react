@@ -1,20 +1,29 @@
-from django_filters import AllValuesMultipleFilter
+from django_filters import AllValuesMultipleFilter, CharFilter, FilterSet
 from django_filters import rest_framework as filters
-from django_filters.widgets import BooleanWidget
-from recipes.models import Recipe
 
+from recipes.models import Ingredient, Recipe
+class RecipeFilter(FilterSet):
+    tags = AllValuesMultipleFilter(field_name="tags__slug")
+    is_in_shopping_cart = filters.BooleanFilter(
+        field_name="is_in_shopping_cart", method="filter"
+    )
+    is_favorited = filters.BooleanFilter(
+        field_name="is_favorited", method="filter"
+    )
 
-class CustomFilterClass(filters.FilterSet):
-    shopping_cart = filters.BooleanFilter(widget=BooleanWidget())
-    favorite = filters.BooleanFilter(widget=BooleanWidget())
-    tags = AllValuesMultipleFilter(field_name='tags__id')
-    following = AllValuesMultipleFilter(field_name='author__id')
+    def filter(self, qs, name, value):
+        if self.request.query_params.get("is_favorited"):
+            qs = qs.filter(favorite__user=self.request.user)
+        if self.request.query_params.get("is_in_shopping_cart"):
+            qs = qs.filter(cart__customer=self.request.user)
+        return qs
 
     class Meta:
         model = Recipe
-        fields = (
-            'author__id',
-            'tags__id',
-            'favorite',
-            'shopping_cart'
-        )
+        fields = ["tags", "author", "is_favorited", "is_in_shopping_cart"]
+class IngredientFilter(FilterSet):
+    name = CharFilter(field_name="name", lookup_expr="icontains")
+
+    class Meta:
+        model = Ingredient
+        fields = ("name",)
