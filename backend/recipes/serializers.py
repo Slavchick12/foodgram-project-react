@@ -6,6 +6,7 @@ from users.serializers import UserSerializer
 
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
+from .utils import get_is_obj
 
 COOKING_TIME_MORE_ZERO = 'Время готовки должно быть больше нуля!'
 FAVORITE_ADDED = 'Рецепт уже добавлен в избранное!'
@@ -52,8 +53,8 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
     tags = TagSerializer(many=True,)
     ingredients = serializers.SerializerMethodField()
-    is_favorited = serializers.BooleanField(default=False)
-    is_in_shopping_cart = serializers.BooleanField(default=False)
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -74,11 +75,15 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         ingredients = IngredientInRecipe.objects.filter(recipe=obj)
         return IngredientInRecipeSerializer(ingredients, many=True).data
 
+    def get_is_in_shopping_cart(self, obj):
+        return get_is_obj(self, obj, ShoppingCart)
+
+    def get_is_favorited(self, obj):
+        return get_is_obj(self, obj, Favorite)
+
 
 class RecipeSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
-    is_favorited = serializers.SerializerMethodField()
-    is_in_shopping_cart = serializers.SerializerMethodField()
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True
@@ -97,23 +102,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             'ingredients',
             'text',
             'cooking_time',
-            'is_favorited',
-            'is_in_shopping_cart',
         )
-
-    def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        return ShoppingCart.objects.filter(
-            user=request.user,
-            recipe=obj
-        ).exists()
-
-    def get_is_favorited(self, obj):
-        request = self.context.get('request')
-        return Favorite.objects.filter(
-            user=request.user,
-            recipe=obj
-        ).exists()
 
     def validate(self, data):
         print(data)

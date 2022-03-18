@@ -29,3 +29,11 @@ def delete_obj(request, pk, model, del_model):
     )
     object.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+def get_is_obj(self, obj, model):
+    request = self.context.get('request')
+    return model.objects.filter(
+        user=request.user,
+        recipe=obj
+    ).exists()
