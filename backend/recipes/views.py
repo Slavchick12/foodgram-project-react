@@ -10,7 +10,8 @@ from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import PageNumberPaginator
 from .permissions import AdminUserOrReadOnly
 from .serializers import (FavoriteSerializer, IngredientSerializer,
-                          RecipeSerializer, ShoppingCartSerializer,
+                          RecipeSerializer, RecipeReadSerializer,
+                          ShoppingCartSerializer,
                           TagSerializer)
 from .utils import add_obj, delete_obj
 
@@ -28,11 +29,15 @@ class IngredientViewSet(GETRequestsMixins):
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    serializer_class = RecipeSerializer
     pagination_class = PageNumberPaginator
     filter_class = CustomFilterClass
     ordering_fields = ('-pub_date',)
     permission_classes = [AdminUserOrReadOnly]
+
+    def get_serializer_class(self):
+        if self.request.method in ['GET']:
+            return RecipeReadSerializer
+        return RecipeSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -40,7 +45,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Recipe.objects.all()
         if self.request.user.is_authenticated:
-            user = self.request.user.id
+            user = self.request.user
             if self.request.query_params.get('is_favorited'):
                 queryset = queryset.filter(favorites__user=user)
             if self.request.query_params.get('is_in_shopping_cart'):

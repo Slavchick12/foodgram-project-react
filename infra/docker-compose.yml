@@ -34,6 +34,7 @@ services:
       - ../frontend/:/app/result_build/
     depends_on:
       - backend
+      - db
   nginx:
     image: nginx:1.19.3
     restart: always
@@ -47,6 +48,7 @@ services:
       - media_value:/var/html/media/
     depends_on:
     - backend
+    - db
 volumes:
   postgres_data:
   static_value:
