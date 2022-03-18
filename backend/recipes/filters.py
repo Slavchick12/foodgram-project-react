@@ -7,14 +7,14 @@ from recipes.models import Recipe
 class CustomFilterClass(filters.FilterSet):
     shopping_cart = filters.BooleanFilter(widget=BooleanWidget())
     favorite = filters.BooleanFilter(widget=BooleanWidget())
-    tags = AllValuesMultipleFilter(field_name='tags__slug')
+    tags = AllValuesMultipleFilter(field_name='tags__id')
     following = AllValuesMultipleFilter(field_name='author__id')
 
     class Meta:
         model = Recipe
         fields = (
             'author__id',
-            'tags__slug',
+            'tags__id',
             'favorite',
             'shopping_cart'
         )
