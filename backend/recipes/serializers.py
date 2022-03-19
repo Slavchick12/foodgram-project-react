@@ -7,7 +7,7 @@ from users.serializers import UserSerializer
 
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
-from .utils import get_is_obj
+from .utils import add_ingredients, get_is_obj
 
 COOKING_TIME_MORE_ZERO = 'Время готовки должно быть больше нуля!'
 FAVORITE_ADDED = 'Рецепт уже добавлен в избранное!'
@@ -106,7 +106,6 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, data):
-        print(data)
         ingredients = data['ingredients']
         tags = data['tags']
         data_list = []
@@ -129,22 +128,12 @@ class RecipeSerializer(serializers.ModelSerializer):
         data['tags'] = tags
         return data
 
-    def add_ingredients(self, instance, **validated_data):
-        ingredients = validated_data['ingredients']
-        for ingredient in ingredients:
-            IngredientInRecipe.objects.create(
-                recipe=instance,
-                ingredient_id=ingredient['id'],
-                amount=ingredient['amount']
-            )
-        return instance
-
     def create(self, validated_data):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         recipe = Recipe.objects.create(**validated_data)
         recipe.tags.set(tags)
-        return self.add_ingredients(
+        return add_ingredients(
             recipe,
             ingredients=ingredients,
         )
@@ -155,7 +144,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         tags = validated_data.pop('tags')
         instance.tags.set(tags)
-        instance = self.add_ingredients(
+        instance = add_ingredients(
             instance,
             ingredients=ingredients,
         )

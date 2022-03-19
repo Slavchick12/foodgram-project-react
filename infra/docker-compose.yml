@@ -2,18 +2,12 @@ version: '3.3'
 services:
   db:
     image: postgres:13.0-alpine
-    environment: 
-      - DB_NAME=postgres
-      - DB_PORT=5432
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ../backend/.env
   backend:
-#    image: slavc/foodgram_backend:latest
     build:
       context: ../backend/
       dockerfile: Dockerfile
@@ -26,7 +20,6 @@ services:
     env_file:
       - ../backend/.env
   frontend:
-#    image: slavc/foodgram_frontend:latest
     build:
       context: ../frontend/
       dockerfile: Dockerfile
@@ -34,7 +27,6 @@ services:
       - ../frontend/:/app/result_build/
     depends_on:
       - backend
-      - db
   nginx:
     image: nginx:1.19.3
     restart: always

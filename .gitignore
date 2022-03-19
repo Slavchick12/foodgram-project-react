@@ -136,3 +136,5 @@ steps.txt
 .flake8
 
 static/
+
+.vscode/

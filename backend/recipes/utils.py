@@ -2,6 +2,8 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.response import Response
 
+from .models import IngredientInRecipe
+
 
 def add_obj(request, pk, model, model_serializer):
     user = request.user
@@ -33,7 +35,20 @@ def delete_obj(request, pk, model, del_model):
 
 def get_is_obj(self, obj, model):
     request = self.context.get('request')
+    if request.user.is_anonymous:
+        return False
     return model.objects.filter(
         user=request.user,
         recipe=obj
     ).exists()
+
+
+def add_ingredients(instance, **validated_data):
+    ingredients = validated_data['ingredients']
+    for ingredient in ingredients:
+        IngredientInRecipe.objects.create(
+            recipe=instance,
+            ingredient_id=ingredient['id'],
+            amount=ingredient['amount']
+        )
+    return instance

@@ -22,9 +22,12 @@ class UserSerializer(serializers.ModelSerializer):
             'last_name',
             'is_subscribed'
         )
+        read_only_fields = 'is_subscribed',
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
+        if request.user.is_anonymous:
+            return False
         return Follow.objects.filter(
             user=request.user,
             following=obj.id
@@ -32,7 +35,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ShortRecipeSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'image', 'cooking_time')
