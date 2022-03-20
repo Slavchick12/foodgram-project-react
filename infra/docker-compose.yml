@@ -40,16 +40,6 @@ services:
       - media_value:/var/html/media/
     depends_on:
     - backend
-  send_message:
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-    - name: send message
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: ${{ secrets.TELEGRAM_MESSAGE }}
 volumes:
   postgres_data:
   static_value:
