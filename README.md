@@ -1,8 +1,15 @@
-## Адрес сервера: 130.193.52.17
-## Админ: admin@mail.ru Пароль: admin
 #  Foodgram - продуктовый помощник
 ![example workflow](https://github.com/Slavchick12/foodgram-project-react/actions/workflows/main.yml/badge.svg)
-
+## Адрес проекта
+Пример готового проекта расположен по адресу:
+```
+http://130.193.52.17/
+```
+## Админ-зона
+```
+Почта: admin@mail.ru
+Пароль: admin
+```
 ## Описание проекта
 Сервис предназначен для взаимодействия с рецептами. У пользователей есть возможность создавать рецепты, изменять их, добавлять в избранное, а также подписыватсья на других авторов. Раздел «Список покупок» позволит пользователям составить список ингредиентов и их количество для приготовления выбранных блюд, который можно скачать в формте «.txt».
 ## Описание Workflow
@@ -118,6 +125,12 @@ sudo docker-compose exec backend python manage.py createsuperuser
 http://130.193.52.17/
 ```
 ## Стек технологий
-```
-Python 3.7.4, Django 2.2.19, Django REST Framework, PostgreSQL, Docker, Yandex.Cloud.
-```
+[![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
+[![Django](https://img.shields.io/badge/-Django-464646?style=flat-square&logo=Django)](https://www.djangoproject.com/)
+[![Django REST Framework](https://img.shields.io/badge/-Django%20REST%20Framework-464646?style=flat-square&logo=Django%20REST%20Framework)](https://www.django-rest-framework.org/)
+[![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-464646?style=flat-square&logo=PostgreSQL)](https://www.postgresql.org/)
+[![Nginx](https://img.shields.io/badge/-NGINX-464646?style=flat-square&logo=NGINX)](https://nginx.org/ru/)
+[![gunicorn](https://img.shields.io/badge/-gunicorn-464646?style=flat-square&logo=gunicorn)](https://gunicorn.org/)
+[![docker](https://img.shields.io/badge/-Docker-464646?style=flat-square&logo=docker)](https://www.docker.com/)
+[![GitHub%20Actions](https://img.shields.io/badge/-GitHub%20Actions-464646?style=flat-square&logo=GitHub%20actions)](https://github.com/features/actions)
+[![Yandex.Cloud](https://img.shields.io/badge/-Yandex.Cloud-464646?style=flat-square&logo=Yandex.Cloud)](https://cloud.yandex.ru/)
