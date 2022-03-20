@@ -17,10 +17,10 @@ class Tag(models.Model):
     name = models.CharField(
         'название',
         unique=True,
-        max_length=50,
+        max_length=150,
         help_text='Название тега'
     )
-    slug = models.SlugField(max_length=50)
+    slug = models.SlugField(max_length=150)
     color = ColorField()
 
     class Meta:
@@ -55,7 +55,7 @@ class Ingredient(models.Model):
 class Recipe(models.Model):
     name = models.CharField(
         'название',
-        max_length=50,
+        max_length=150,
         help_text='Название рецепта'
     )
     text = models.TextField('текст', help_text='Здесь Ваш текст')
