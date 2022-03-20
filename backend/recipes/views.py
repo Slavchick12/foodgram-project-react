@@ -1,10 +1,10 @@
 from django.db.models import Sum
 from django.http import HttpResponse
-from rest_framework import filters, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 
-from .filters import CustomFilterClass
+from .filters import CustomFilterClass, IngredientSearchFilter
 from .mixins import GETRequestsMixins
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import PageNumberPaginator
@@ -23,8 +23,8 @@ class TagViewSet(GETRequestsMixins):
 class IngredientViewSet(GETRequestsMixins):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
+    filter_backends = (IngredientSearchFilter,)
+    search_fields = ('^name',)
 
 
 class RecipeViewSet(viewsets.ModelViewSet):

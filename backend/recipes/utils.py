@@ -45,10 +45,11 @@ def get_is_obj(self, obj, model):
 
 def add_ingredients(instance, **validated_data):
     ingredients = validated_data['ingredients']
+    print(ingredients)
     for ingredient in ingredients:
         IngredientInRecipe.objects.create(
             recipe=instance,
-            ingredient_id=ingredient['id'],
+            ingredient_id=ingredient.get('id'),
             amount=ingredient['amount']
         )
     return instance

@@ -39,7 +39,10 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(
+        source='ingredient.id',
+        read_only=True
+    )
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
         source='ingredient.measurement_unit'
@@ -89,7 +92,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
-    ingredients = IngredientInRecipeSerializer(many=True,)
+    ingredients = IngredientInRecipeSerializer(many=True, read_only=True)
     image = Base64ImageField(max_length=None, use_url=True)
 
     class Meta:
@@ -106,11 +109,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         )
 
     def validate(self, data):
-        ingredients = data['ingredients']
-        tags = data['tags']
+        ingredients = self.initial_data.get('ingredients')
+        tags = self.initial_data.get('tags')
         data_list = []
         for ingredient in ingredients:
-            if ingredient['amount'] <= 0:
+            if int(ingredient['amount']) <= 0:
                 raise serializers.ValidationError(INGREDIENT_MORE_ZERO)
             if ingredient in data_list:
                 raise serializers.ValidationError(INGREDIENT_ADDED)
