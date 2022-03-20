@@ -3,7 +3,7 @@ from django.contrib import admin
 from .models import Ingredient, IngredientInRecipe, Recipe, ShoppingCart, Tag
 
 
-class IngredientInRecipetInLine(admin.TabularInline):
+class IngredientInRecipeInLine(admin.TabularInline):
     model = IngredientInRecipe
     fk_name = 'recipe'
 
@@ -30,7 +30,7 @@ class RecipeAdmin(admin.ModelAdmin):
     search_fields = ('name', 'author', 'tags')
     list_filter = ('pub_date',)
     empty_value_display = '-пусто-'
-    inlines = [IngredientInRecipetInLine]
+    inlines = [IngredientInRecipeInLine]
 
 
 @admin.register(Ingredient)
