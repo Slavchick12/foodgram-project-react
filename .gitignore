@@ -138,3 +138,5 @@ steps.txt
 static/
 
 .vscode/
+
+backend/fixtures/ingredients_data_create.py
