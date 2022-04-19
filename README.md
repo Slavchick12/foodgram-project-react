@@ -3,7 +3,7 @@
 ## Адрес проекта
 Пример готового проекта расположен по адресу:
 ```
-http://51.250.105.95/
+http://foodlike.ddns.net/
 ```
 ## Админ-зона
 ```
@@ -127,7 +127,7 @@ sudo docker-compose exec backend python manage.py createsuperuser
 ## Пример проекта
 Пример готового проекта расположен по адресу:
 ```
-http://51.250.105.95/
+http://foodlike.ddns.net/
 ```
 ## Стек технологий
 [![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
