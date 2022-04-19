@@ -3,7 +3,7 @@
 ## Адрес проекта
 Пример готового проекта расположен по адресу:
 ```
-http://130.193.52.17/
+http://51.250.105.95/
 ```
 ## Админ-зона
 ```
@@ -127,7 +127,7 @@ sudo docker-compose exec backend python manage.py createsuperuser
 ## Пример проекта
 Пример готового проекта расположен по адресу:
 ```
-http://130.193.52.17/
+http://51.250.105.95/
 ```
 ## Стек технологий
 [![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
