@@ -1,7 +1,7 @@
 #  Foodgram - продуктовый помощник
 ![example workflow](https://github.com/Slavchick12/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 ## Адрес проекта
-Пример готового проекта расположен по адресу:
+Пример готового проекта расположен по адресу (временно недоступно):
 ```
 http://foodlike.ddns.net/
 ```
@@ -124,11 +124,6 @@ sudo docker-compose exec backend python manage.py createsuperuser
 ##### Шаг 9. Проект запущен:
 Проект будет доступен по вашему IP-адресу.
 
-## Пример проекта
-Пример готового проекта расположен по адресу:
-```
-http://foodlike.ddns.net/
-```
 ## Стек технологий
 [![Python](https://img.shields.io/badge/-Python-464646?style=flat-square&logo=Python)](https://www.python.org/)
 [![Django](https://img.shields.io/badge/-Django-464646?style=flat-square&logo=Django)](https://www.djangoproject.com/)
