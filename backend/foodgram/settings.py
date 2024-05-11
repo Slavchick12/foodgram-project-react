@@ -9,13 +9,11 @@ load_dotenv()
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
-DEBUG = False
+DEBUG = os.environ['DEBUG']
 
 ALLOWED_HOSTS = [
-    '51.250.105.95',
-    'foodlike.ddns.net',
     '127.0.0.1',
-    'localhost'
+    'localhost',
 ]
 
 INSTALLED_APPS = [

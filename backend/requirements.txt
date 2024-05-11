@@ -23,7 +23,6 @@ Jinja2==3.0.3
 MarkupSafe==2.0.1
 mccabe==0.6.1
 oauthlib==3.2.0
-Pillow==9.0.1
 psycopg2-binary==2.8.6
 pycodestyle==2.8.0
 pycparser==2.21
