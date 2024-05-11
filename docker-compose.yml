@@ -6,10 +6,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
-      - ../backend/.env
+      - /backend/.env
+
   backend:
     build:
-      context: ../backend/
+      context: /backend/
       dockerfile: Dockerfile
     ports:
      - '8000:8000'
@@ -20,10 +21,11 @@ services:
     depends_on:
       - db
     env_file:
-      - ../backend/.env
+      - /backend/.env
+
   frontend:
     build:
-      context: ../frontend/
+      context: /frontend/
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/foodgram/result_build/
