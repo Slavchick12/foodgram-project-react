@@ -15,8 +15,8 @@ services:
      - '8000:8000'
     restart: unless-stopped
     volumes:
-      - static_value:/app/static/
-      - media_value:/app/media/
+      - static_value:/foodgram/static/
+      - media_value:/foodgram/media/
     depends_on:
       - db
     env_file:
@@ -25,8 +25,8 @@ services:
     build:
       context: ../frontend/
       dockerfile: Dockerfile
-    # volumes:
-    #   - ../frontend/:/app/result_build/
+    volumes:
+      - ../frontend/:/foodgram/result_build/
     depends_on:
       - backend
 

@@ -1,5 +1,5 @@
 FROM python:3.7.4-buster
-WORKDIR /app
+WORKDIR /foodgram
 COPY requirements.txt .
 RUN apt update && \
     apt upgrade -y && \
