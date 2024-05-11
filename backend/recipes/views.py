@@ -36,6 +36,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method in ['GET']:
             return RecipeReadSerializer
+
         return RecipeSerializer
 
     def perform_create(self, serializer):
@@ -51,11 +52,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 queryset = queryset.filter(shopping_cart__user=user)
         return queryset
 
-    @action(
-        detail=True,
-        methods=['post'],
-        permission_classes=[IsAuthenticated]
-    )
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def favorite(self, request, pk=None):
         return add_obj(request, pk, Recipe, FavoriteSerializer)
 
@@ -63,11 +60,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def delete_favorite(self, request, pk=None):
         return delete_obj(request, pk, Recipe, Favorite)
 
-    @action(
-        detail=True,
-        methods=['post'],
-        permission_classes=[IsAuthenticated]
-    )
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, pk=None):
         return add_obj(request, pk, Recipe, ShoppingCartSerializer)
 
@@ -75,11 +68,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def delete_shopping_cart(self, request, pk=None):
         return delete_obj(request, pk, Recipe, ShoppingCart)
 
-    @action(
-        detail=False,
-        methods=['GET'],
-        permission_classes=[IsAuthenticated]
-    )
+    @action(detail=False, methods=['GET'], permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
         queryset = ShoppingCart.objects.filter(user=request.user)
         shoplist = {}
@@ -88,9 +77,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'recipe__ingredients__measurement_unit',
         )
         ingredients_annotated = ingredients.annotate(
-            amount_sum=Sum(
-                'recipe__recipe_ingredient__amount'
-            )
+            amount_sum=Sum('recipe__recipe_ingredient__amount')
         )
         for ingredient in ingredients_annotated:
             name = ingredient[0]
@@ -99,16 +86,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if name not in shoplist:
                 shoplist[name] = {
                     'amount': amount,
-                    'measurement_unit': measurement_unit
+                    'measurement_unit': measurement_unit,
                 }
             continue
         content = 'Список покупок:\n'
         for ingredient in shoplist:
-            content += (f'{ingredient}'
-                        f'({shoplist[ingredient]["measurement_unit"]}) - '
-                        f'{shoplist[ingredient]["amount"]}\n')
+            content += (
+                f'{ingredient}'
+                f'({shoplist[ingredient]["measurement_unit"]}) - '
+                f'{shoplist[ingredient]["amount"]}\n'
+            )
         response = HttpResponse(content, content_type='text/plain')
-        response['Content-Disposition'] = (
-            'attachment;' 'filename="shoplist.txt"'
-        )
+        response['Content-Disposition'] = 'attachment;' 'filename="shoplist.txt"'
         return response
