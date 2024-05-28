@@ -7,9 +7,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 load_dotenv()
 
-SECRET_KEY = os.environ['SECRET_KEY']
+SECRET_KEY = os.getenv('SECRET_KEY')
 
-DEBUG = os.environ['DEBUG']
+DEBUG = os.getenv('DEBUG', False)
 
 ALLOWED_HOSTS = [
     '127.0.0.1',

@@ -24,6 +24,8 @@ class User(AbstractUser):
         max_length=50,
         verbose_name='Фамилия'
     )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     def __str__(self):
         return self.username
